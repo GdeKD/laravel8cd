@@ -15,5 +15,21 @@ pipeline {
                 sh 'php artisan test'
             }
         }
+        stage("Docker build") {
+            steps {
+                sh "docker rmi gdekd/laravel8cd"
+                sh "docker build -t gdekd/laravel8cd --no-cache ."
+            }
+        }
+        stage("Docker push") {
+            environment {
+                DOCKER_USERNAME = credentials("dockerhub-id")
+                DOCKER_PASSWORD = credentials("dockerhub-pass")
+            }
+            steps {
+                sh "docker login --username ${DOCKER_USERNAME} --password ${DOCKER_PASSWORD}"
+                sh "docker push gdekd/laravel8cd"
+            }
+        }
   }
 }
