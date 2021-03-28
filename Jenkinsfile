@@ -19,7 +19,7 @@ pipeline {
                 sh 'echo DB_PASSWORD=${DB_PASSWORD} >> .env'
                 sh 'php artisan key:generate'
                 sh 'cp .env .env.testing'
-                sh 'php artisan migrate'
+                //sh 'php artisan migrate'
             }
         }
         stage("Unit test") {
@@ -27,29 +27,29 @@ pipeline {
                 sh 'php artisan test'
             }
         }
-        stage("Code coverage") {
-            steps {
-                sh "vendor/bin/phpunit --coverage-html 'reports/coverage'"
-            }
-        }
-        stage("Static code analysis larastan") {
-            steps {
-                sh "vendor/bin/phpstan analyse --memory-limit=2G"
-            }
-        }
-        stage("Static code analysis phpcs") {
-            steps {
-                sh "vendor/bin/phpcs"
-            }
-        }
+        //stage("Code coverage") {
+        //    steps {
+        //        sh "vendor/bin/phpunit --coverage-html 'reports/coverage'"
+        //    }
+        //}
+        //stage("Static code analysis larastan") {
+        //    steps {
+        //        sh "vendor/bin/phpstan analyse --memory-limit=2G"
+        //    }
+        //}
+        //stage("Static code analysis phpcs") {
+        //    steps {
+        //        sh "vendor/bin/phpcs"
+        //    }
+        //}
         stage("Docker build") {
             steps {
-                sh "docker build -t danielgara/laravel8cd ."
+                sh "docker build -t gdekd/laravel8cd ."
             }
         }
         stage("Docker push") {
             environment {
-                DOCKER_USERNAME = credentials("docker-user")
+                DOCKER_USERNAME = credentials("gdekd")
                 DOCKER_PASSWORD = credentials("docker-password")
             }
             steps {
@@ -59,7 +59,7 @@ pipeline {
         }
         stage("Deploy to staging") {
             steps {
-                sh "docker run -d --rm -p 80:80 --name laravel8cd danielgara/laravel8cd"
+                sh "docker run -d --rm -p 80:80 --name laravel8cd gdekd/laravel8cd"
             }
         }
         stage("Acceptance test curl") {
@@ -70,7 +70,8 @@ pipeline {
         }
         stage("Acceptance test codeception") {
             steps {
-                sh "vendor/bin/codecept run"
+                //sh "vendor/bin/codecept run"
+                sleep 10
             }
             post {
                 always {
