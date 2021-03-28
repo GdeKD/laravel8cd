@@ -17,7 +17,7 @@ pipeline {
         }
         stage("Docker build") {
             steps {
-                sh "docker rmi gdekd/laravel8cd"
+                sh "docker 2>/dev/null 1>&2 rmi gdekd/laravel8cd || true"
                 sh "docker build -t gdekd/laravel8cd --no-cache ."
             }
         }
